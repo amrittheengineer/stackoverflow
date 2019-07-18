@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Watson API</title>
+  </head>
+  <body>
+    <form action="javascript:callAPI()" method="POST">
+      <input id="reply" name="reply" type="text" autofocus />
+      <input type="submit" value="Submit" />
+    </form>
+    <pre><code id="ibm-response"></code></pre>
+  </body>
+  <script>
+    function callAPI() {
+      document.getElementById("ibm-response").innerHTML = "Loading...";
+      let val = { reply: document.getElementById("reply").value };
+      var req = new XMLHttpRequest();
+      req.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+          document.getElementById("ibm-response").innerHTML = JSON.stringify(
+            JSON.parse(req.responseText)["sentiment"],
+            undefined,
+            2
+          );
+        }
+      };
+      req.onerror = function() {
+        document.getElementById("ibm-response").innerHTML = "<h1>ERROR</h1>";
+      };
+      req.open("POST", "/watson/api", true);
+      req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+      console.log(JSON.stringify(val));
+      req.send("reply=" + document.getElementById("reply").value);
+    }
+  </script>
+</html>
