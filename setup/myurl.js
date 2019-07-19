@@ -10,5 +10,8 @@ module.exports = {
     apiKey: "3AIeDSBq_xjSwZeZstnRE8_F5YXu1brkhWyoo83tZpPH",
     url:
       "https://gateway-lon.watsonplatform.net/natural-language-understanding/api"
+  },
+  google: {
+    apiKey: "AIzaSyBn_-ioFbkAzUgddk6KOUarkSABU4XpMJE"
   }
 };
