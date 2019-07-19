@@ -30,6 +30,6 @@ router.post("/api", (req, res) => {
 });
 
 router.get("/api/test", (req, res) => {
-  res.sendFile("index.html");
+  res.sendFile("watson.html");
 });
 module.exports = router;
