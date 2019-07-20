@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const setup = require("../../../setup/myurl");
+const stripTags = require("string-strip-html");
 const path = require("path");
 var axios = require("axios");
 const url = "https://api.stackexchange.com/2.2";
@@ -43,23 +44,47 @@ router.get("/api/:questionID", (req, res) => {
       console.log(answerIDs);
       answerIDs.forEach(answerID => {
         // Getting Comments
-        // Left here on 19-07-2019
-
         axios
           .get(
-            `${url}/answers/${answerID}/comments?order=desc&sort=votes&site=stackoverflow`
+            `${url}/answers/${answerID}/comments?order=desc&sort=votes&site=stackoverflow&filter=withbody`
           )
           .then(axiosRes2 => {
             let data2 = axiosRes2.data;
-            let commentIDs = data2.items.map(item => item.comment_id); // comment_id
-            console.log(commentIDs);
+            let commentIDs = data2.items.map(item => item.body); // comment_id
+            let commentLabel, commentScore;
+            commentIDs.forEach((comment, no) => {
+              // axios.create({ , proxy: false });
+              comment = decodeURI(stripTags(comment));
+              console.log(`${no + 1})Comment - ${comment}`);
+              return;
+              // Left Here
+              axios
+                .request({
+                  data: {
+                    reply: comment
+                  },
+                  baseURL: "http://localhost:5000",
+                  headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                  },
+                  url: "/watson/api",
+                  method: "post"
+                })
+                .then(axiosRes3 => {
+                  console.log(`${no + 1})Comment`, comment);
+                  let data3 = axiosRes3.data;
+                  commentScore.push(data3.sentiment.document.score);
+                  console.log(`\t${data3.sentiment.document.score}`);
+                })
+                .catch(err => console.log(err.message));
+            });
           })
           .catch(err => console.log(err.message));
       });
 
       // res.json({ ...answers });
     })
-    .catch(err => console.log(err));
+    .catch(err => console.log(err.message));
 });
 
 router.get("/api/test", (req, res) => {
