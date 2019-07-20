@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const setup = require("../../../setup/myurl");
+const path = require("path");
 var axios = require("axios");
 
 router.post("/api", (req, res) => {
@@ -26,6 +27,8 @@ router.post("/api", (req, res) => {
 });
 
 router.get("/api/test", (req, res) => {
-  res.sendFile("google/index.html");
+  res.sendFile("google.html", {
+    root: path.join(__dirname, "../../../public")
+  });
 });
 module.exports = router;

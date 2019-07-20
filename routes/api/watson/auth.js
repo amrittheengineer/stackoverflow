@@ -1,4 +1,5 @@
 const express = require("express");
+const path = require("path");
 
 const setup = require("../../../setup/myurl");
 var NaturalLanguageUnderstandingV1 = require("ibm-watson/natural-language-understanding/v1");
@@ -30,6 +31,8 @@ router.post("/api", (req, res) => {
 });
 
 router.get("/api/test", (req, res) => {
-  res.sendFile("watson.html");
+  res.sendFile("watson.html", {
+    root: path.join(__dirname, "../../../public")
+  });
 });
 module.exports = router;
