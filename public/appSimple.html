@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>StackOverflow Finder</title>
+  </head>
+
+  <body>
+    <form action="javascript:callAPI()" method="POST">
+      <input id="query" name="query" type="text" autofocus />
+      <input type="submit" value="Submit" />
+    </form>
+    <pre><code id="server-response"></code></pre>
+  </body>
+  <script>
+    function callAPI() {
+      var stackOverflowQuestionIds = [];
+      document.getElementById("server-response").innerHTML = "Loading...";
+      let val = { query: document.getElementById("query").value };
+      var req = new XMLHttpRequest();
+      req.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+          // document.getElementById("server-response").innerHTML = JSON.stringify(
+          //     JSON.parse(req.responseText),
+          //     undefined,
+          //     2
+          // );
+          googleResp = JSON.parse(req.responseText);
+          Object.values(googleResp).forEach(sURL => {
+            stackOverflowQuestionIds.push(sURL.split("/")[4]);
+          });
+          stackOverflowQuestionIds.forEach(link => {
+            callStackAPI(link);
+          });
+        }
+      };
+      req.onerror = function() {
+        document.getElementById("server-response").innerHTML = "<h1>ERROR</h1>";
+      };
+      req.open("POST", "/google/api", true);
+      req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+      console.log(JSON.stringify(val));
+      req.send("query=" + document.getElementById("query").value);
+    }
+    var i = 1;
+    function callStackAPI(stackQuestionId) {
+      var req = new XMLHttpRequest();
+      req.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+          let code = document.createElement("code");
+          code.id = "code" + i;
+          i++;
+          code.innerHTML = JSON.stringify(
+            JSON.parse(req.responseText),
+            undefined,
+            2
+          );
+          document.getElementById("server-response").appendChild(code);
+        }
+      };
+      req.onerror = function() {
+        let code = document.createElement("code");
+        i++;
+        code.innerHTML = "<h1>ERROR</h1>";
+        document.getElementById("server-response").appendChild(code);
+      };
+      req.open("GET", "/stackoverflow/api/question/" + stackQuestionId, true);
+      req.send();
+    }
+  </script>
+</html>
