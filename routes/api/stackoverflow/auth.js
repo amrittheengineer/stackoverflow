@@ -1,12 +1,12 @@
 const express = require("express");
 const router = express.Router();
-// const setup = require("../../../setup/myurl");
 const stripTags = require("string-strip-html");
 const path = require("path");
 var axios = require("axios");
 var qs = require("querystring");
 const url = "https://api.stackexchange.com/2.2";
 
+//Function that returns the average of the emotional score of answer
 function replyAverage(lst) {
   if (lst.length) {
     let avg = lst.reduce((x, y) => Number(x) + Number(y), 0) / lst.length;
@@ -18,27 +18,10 @@ function replyAverage(lst) {
   }
 }
 
-router.get("/api/answers/:answerID", (req, res) => {
-  if (req.params.answerID) {
-    let data1 = axiosRes1.data;
-    let answerIDs = data1.items.map(item => item.answer_id);
-    console.log(answerIDs);
-    answerIDs.forEach(answerID => {
-      // Getting Comments
-      axios
-        .get(
-          `${url}/answers/${answerID}/comments?order=desc&sort=votes&site=stackoverflow`
-        )
-        .then(axiosRes2 => {
-          let data2 = axiosRes2.data;
-          let commentIDs = data2.items.map(item => item.comment_id); // comment_id
-          console.log(commentIDs);
-        })
-        .catch(err => console.log(err.message));
-    });
-  }
-});
-
+//@type     GET
+//@route    /query/api/question/:questionID
+//@desc     REST API to get the stackoverflow question's answers by questionID in sorted order by sentimental analysis of each comment.
+//@access   PUBLIC
 router.get("/api/question/:questionID", (req, res) => {
   let questionID = req.params.questionID.trim();
   console.log(questionID);
@@ -98,7 +81,7 @@ router.get("/api/question/:questionID", (req, res) => {
                 // // console.log(commentScoreArr);
                 ansObj.push({
                   replyScores: commentScoreArr,
-                  answer: decodeURI(stripTags(answerStrings[orderInd])).trim()
+                  answer: stripTags(answerStrings[orderInd]).trim()
                 });
                 orderInd++;
               })
@@ -123,14 +106,13 @@ router.get("/api/question/:questionID", (req, res) => {
     .catch(err => console.log(err.message + " ffr"));
 });
 
+//@type     GET
+//@route    /query/api/test
+//@desc     Route to test /query/api/question/:questionID
+//@access   PUBLIC
 router.get("/api/test", (req, res) => {
   res.sendFile("appSimple.html", {
     root: path.join(__dirname, "../../../public")
   });
 });
-// router.post("/api/test", (req, res) => {
-//   res.sendFile("appSimple.html", {
-//     root: path.join(__dirname, "../../../public")
-//   });
-// });
 module.exports = router;
