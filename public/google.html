@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Google API</title>
+  </head>
+
+  <body>
+    <form action="javascript:callAPI()" method="POST">
+      <input id="query" name="query" type="text" autofocus />
+      <input type="submit" value="Submit" />
+    </form>
+    <pre><code id="google-response"></code></pre>
+  </body>
+  <script>
+    function callAPI() {
+      document.getElementById("google-response").innerHTML = "Loading...";
+      let val = { query: document.getElementById("query").value };
+      var req = new XMLHttpRequest();
+      req.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+          document.getElementById("google-response").innerHTML = JSON.stringify(
+            JSON.parse(req.responseText),
+            undefined,
+            2
+          );
+        }
+      };
+      req.onerror = function() {
+        document.getElementById("google-response").innerHTML = "<h1>ERROR</h1>";
+      };
+      req.open("POST", "/google/api", true);
+      req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+      console.log(JSON.stringify(val));
+      req.send("query=" + document.getElementById("query").value);
+    }
+  </script>
+</html>

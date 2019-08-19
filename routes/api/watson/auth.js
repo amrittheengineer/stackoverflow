@@ -5,10 +5,6 @@ const setup = require("../../../setup/myurl");
 var NaturalLanguageUnderstandingV1 = require("ibm-watson/natural-language-understanding/v1");
 const router = express.Router();
 
-//@type     GET
-//@route    /watson/api
-//@desc     REST API to analyse the comment using Sentimental Analysis.
-//@access   PUBLIC
 router.post("/api", (req, res) => {
   var nlu = new NaturalLanguageUnderstandingV1({
     iam_apikey: setup.watson.apiKey,
@@ -34,10 +30,6 @@ router.post("/api", (req, res) => {
     });
 });
 
-//@type     GET
-//@route    /watson/api/test
-//@desc     Route to test /watson/api.
-//@access   PUBLIC
 router.get("/api/test", (req, res) => {
   res.sendFile("watson.html", {
     root: path.join(__dirname, "../../../public")
