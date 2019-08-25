@@ -5,7 +5,7 @@ const setup = require("../../../setup/myurl");
 var NaturalLanguageUnderstandingV1 = require("ibm-watson/natural-language-understanding/v1");
 const router = express.Router();
 var VisualRecognitionV3 = require("ibm-watson/visual-recognition/v3");
-var fs = require("fs");
+// var fs = require("fs");
 const fileUpload = require("express-fileupload");
 router.use(
   fileUpload({
@@ -45,42 +45,29 @@ router.post("/api/image", (req, res) => {
     version: "2018-03-19",
     iam_apikey: "XvCQzlMh3sFOU3NMymRgcsmIhW0iIt6E68f6s9iMQl03"
   });
+  let buf = Buffer.from(req.body.image, "base64");
+  console.log("Request recieved " + count);
 
-  // console.log(req.body);
+  visualRecognition
+    .classify({
+      images_file: buf
+    })
+    .then(result => {
+      result = JSON.parse(JSON.stringify(result));
+      result = result["images"][0]["classifiers"][0]["classes"].map(
+        e => e.class
+      );
+      // console.log(result);
+      res.json({ predictions: result });
 
-  // buf = new Buffer(req.body.image, 'base64');
-  // return;
-  // let image = require('../../../images/test.jpeg')
-  let buf = new Buffer(req.body.image, "base64");
-  fs.writeFile(`./images/image${count}.jpg`, buf, err => {
-    if (err) {
-      res.json({ error: true });
-    } else {
-      var params = {
-        images_file: fs.createReadStream(`./images/image${count}.jpg`)
-      };
-      console.log("Request recieved " + count);
+      // console.log(JSON.stringify(result, null, 2));
+      count++;
 
-      visualRecognition
-        .classify(params)
-        .then(result => {
-          result = JSON.parse(JSON.stringify(result));
-          result = result["images"][0]["classifiers"][0]["classes"].map(
-            e => e.class
-          );
-          console.log(result);
-          res.json({ predictions: result });
-
-          // console.log(JSON.stringify(result, null, 2));
-          count++;
-
-          // res.json();
-        })
-        .catch(err => {
-          console.log(err);
-        });
-    }
-  });
+      // res.json();
+    })
+    .catch(err => {
+      console.log(err);
+    });
 });
 
 router.get("/api/test", (req, res) => {
