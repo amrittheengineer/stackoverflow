@@ -24,18 +24,18 @@ class Body extends React.Component {
       ),
       answerlst: [],
       noScoreAns: [],
-      ansCount: 0
+      ansCount: 0,
     };
   }
   componentWillUnmount() {
     this.setState({
       nav: <NavWithSearch search={this.search} />,
-      body: <Loader /> //<Answer answer="Hello" />
+      body: <Loader />, //<Answer answer="Hello" />
     });
   }
   ansCounter() {
     this.setState({
-      ansCount: this.state.ansCount + 1
+      ansCount: this.state.ansCount + 1,
     });
     return this.state.ansCount;
   }
@@ -46,41 +46,41 @@ class Body extends React.Component {
 
       this.setState({
         nav: <NavWithSearch search={this.search} />,
-        body: <Loader />
+        body: <Loader />,
       });
       axios
         .request({
           url: "/google/api",
           method: "POST",
           data: qs.stringify({
-            query: query
+            query: query,
           }),
-          baseURL: "http://localhost:5000",
+          // baseURL: "http://localhost:5000",
           headers: {
             "Content-Type": "application/x-www-form-urlencoded",
-            "Access-Control-Allow-Origin": "*"
-          }
+            "Access-Control-Allow-Origin": "*",
+          },
         })
-        .then(gres => {
+        .then((gres) => {
           // console.log(gres.data);
           var stackOverflowQuestionIds = [];
-          Object.values(gres.data).forEach(sURL => {
+          Object.values(gres.data).forEach((sURL) => {
             stackOverflowQuestionIds.push(sURL.split("/")[4]);
           });
 
-          stackOverflowQuestionIds.forEach(qId => {
+          stackOverflowQuestionIds.forEach((qId) => {
             axios
               .request({
                 url: "/stackoverflow/api/question/" + qId,
                 method: "GET",
-                baseURL: "http://localhost:5000",
+                // baseURL: "http://localhost:5000",
                 headers: {
                   "Content-Type": "application/x-www-form-urlencoded",
-                  "Access-Control-Allow-Origin": "*"
-                }
+                  "Access-Control-Allow-Origin": "*",
+                },
               })
-              .then(sres => {
-                sres.data.forEach(dta => {
+              .then((sres) => {
+                sres.data.forEach((dta) => {
                   console.log(dta);
                   if (dta.replyScores.length) {
                     let avg =
@@ -98,7 +98,7 @@ class Body extends React.Component {
                             answerlst={this.state.answerlst}
                             noScoreAns={this.state.noScoreAns}
                           />
-                        )
+                        ),
                       });
                     }
                   } else {
@@ -111,15 +111,15 @@ class Body extends React.Component {
                           answerlst={this.state.answerlst}
                           noScoreAns={this.state.noScoreAns}
                         />
-                      )
+                      ),
                     });
                   }
                 });
               })
-              .catch(err => console.log(err));
+              .catch((err) => console.log(err));
           });
         })
-        .catch(err => console.log(err));
+        .catch((err) => console.log(err));
     }
   }
   render() {

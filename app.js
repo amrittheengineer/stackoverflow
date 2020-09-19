@@ -7,7 +7,7 @@ const googleAPI = require("./routes/api/google/auth");
 const stackoverflowAPI = require("./routes/api/stackoverflow/auth");
 
 app.use(require("cors")());
-app.use(express.static(__dirname + "/public"));
+app.use(express.static(__dirname + "/ui/build"));
 
 app.use(bodyparser.urlencoded({ extended: true }));
 
@@ -16,7 +16,7 @@ app.use("/google", googleAPI);
 app.use("/stackoverflow", stackoverflowAPI);
 
 app.get("/", (req, res) => {
-  res.redirect("/stackoverflow/api/test");
+  res.sendFile(__dirname + "/ui/build/index.html");
 });
 
 app.listen(port, () => console.log(`App is running at port ${port}...`));
