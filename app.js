@@ -16,7 +16,7 @@ app.use("/google", googleAPI);
 app.use("/stackoverflow", stackoverflowAPI);
 
 app.get("/", (req, res) => {
-  res.sendFile(__dirname + "/ui/build/index.html");
+  res.sendFile("index.html");
 });
 
 app.listen(port, () => console.log(`App is running at port ${port}...`));
